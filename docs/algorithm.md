@@ -28,7 +28,7 @@
     * [Array](#array-2)
     * [Divide and Conquer](#divide-and-conquer)
     * [Dynamic Programming](#dynamic-programming)
-    * [Backtracing](#backtracking)
+    * [Backtracking](#backtracking)
     * [Graph](#graph-2)
     * [Mathematics](#mathematics)
 
@@ -503,12 +503,26 @@ double hashing and cuckoo hashing.
 
 ## Graph
 Two types of graph exist: undirected or directed. It could have weight or not
-(can be considered as weight 1 for all edges).
+(can be considered as weight 1 for all edges). Tree is a specific type of
+graph.
 
 It can be represented by directly by linked nodes, adjacency list,
 adjacency matrix or incidence matrix.
 
 ## Disjoint set
+An abstract data structure that tracks a set of elements paritioned
+into a number of disjoint subsets. Making such a set will first make every
+element a seperated set. It's often used to solve dynamic connectivity
+problem.
+
+There're two operations:
+1. Find: check which subset an element is in.
+2. Union: Merge two subsets together.
+
+The implementation of disjoint set is forest. For every element inside a set,
+they will be under the same tree. Therefore to find which set an element is in,
+just traverse to the root node of the tree. Union just attach the tree with
+smaller size/rank to the larger one to make sure the depth is relatively low.
 
 # Algorithms
 
@@ -685,24 +699,136 @@ def knapsack(weights: 'List[int]', value: 'List[int]', limit: 'int'): -> 'int'
     return m[-1][-1]
 ```
 ## Backtracking
+A general algorithm such that it abandon the partial solution whenever it's not
+possible to become a valid solution.
+
+An example would be solving the Sudoku.
 
 ## Graph
 
 ### Depth First Search
+Starting from the root node for a tree(or any node if searching in graph).
+A stack is always used when implementing the algorithm, as well as a list of
+'visited vertex' to avoid infinite loop in graph.
+```python
+def dfs(G, v):
+    v.set_explored(True)
+    for edge in G.incident_edges(v):
+        if not edge.explored():
+            w = G.adjencent_vertex(v, e)
+            if not w.explored():
+                e.set_back_edge(False)
+                dfs(G, w)
+            else:
+                e.set_back_edge(True)
+    return
+```
+The algorithm returns a graph which labelled if edges are back edge or not.
 
 ### Breath First Search
+Starting from the root node for a tree(or any node if searching in graph).
+It visits neighbor vertices first compare to their child vertices. A queue is
+alsays used in the implementation. Always used in finding shortest path.
+```python
+import Queue from queue
+# Finds a node t in the graph such that somthing(t) == True
+def bfs(G, v):
+    q = Queue()
+    q.put(v)
+    v.set_marked(True)
+    while not q.empty():
+        t = q.get()
+        if something(t):
+            return t
+        for e in G.adjacent_edges(t):
+            o = G.adjacent_vertex(t, e)
+            if not o.marked():
+                o.set_marked(True)
+                q.put(o)
+    return None
+```
 
 ### Shortest Path
 
 #### Dijkstra's algorithm
+Solves the single-source shortest path problem with non-negative edge weight.
+```python
+import sys
+def min_distance(G, dist, spt):
+    min_dist = sys.maxint # Init with infinitely large
+    for v in range(G.total_vertices()):
+        # Not used before and smaller dist
+        if dist[v] < min and not spt[v]:
+            min_dist = dist[v]
+            min_index = v
+    return min_index
 
-### Minimum spanning tree
+def dijkstra(G, src):
+    total = G.total_vertices()
+    dist = [sys.maxint] * total
+    dist[src] = 0
+    spt = [False] * total
+
+    for cout in range(total):
+
+        # Pick the minimum distance vertex from
+        # the set of vertices not yet processed.
+        # u is always equal to src in first iteration
+        u = minDistance(G, dist, spt)
+
+        # Put the minimum distance vertex in the
+        # shotest path tree(visited)
+        spt[u] = True
+
+        # Update dist value of the adjacent vertices
+        # of the picked vertex only if the current
+        # distance is greater than new distance and
+        # the vertex in not in the shotest path tree
+        for v in range(total):
+            if G.edge[u][v] > 0 and spt[v] == False and
+               dist[v] > dist[u] + G.edge[u][v]:
+                    dist[v] = dist[u] + G.edge[u][v]
+    return dist
+```
+
+#### Bellman-Ford algorithm
+Solves the single-source shortest path problem that allows negative weight.
+Unlike Dijkstra's algorithm which only pick the index with minimum distance,
+it counts in every indices.
+
+#### Floyd-Warshall algorithm
+Solves the shortest path problem with all-source, while graph cannot have
+negative cycles. The basic logic is that
+```
+shortestPath(i, j, 0) = weight(i, j)
+shortestPath(i, j, k) = min(shortestPath(i, j, k-1),
+    shortestPath(i, k, k-1) + shortestPath(k, j, k-1))
+```
+where k means the graph using only vertices {1, 2, ..., k}.
+
+### Prim's Algorithm
+An algoithm to find minimum spanning tree of a graph. Starting from one node
+and basically choose the edge with minimum weight that connects a node not
+in the current tree. It's a greedy algorithm.
 
 ### Traverse
+Includes Eulerian Path(visit all edges exactly once), Hamiltonian Path(visit
+all vertices once), Chinese postman problem(shortest circuit that visit every
+edge once, Eulerian circuit or smallest duplicate) and traveling
+salesman problem(optimal Hamiltonian path).
+
+1 and 3 can be solved in polynomial time while the other two are NP-complete.
 
 ## Search
 
 ### A* Search
+Similar to Dijkstra's algorithm, but adds a heuristic function h(n) which
+predicts the distance between n and the target. Then pick the one value with
+lowest g(n) + h(n) for next step, where g(n) = current cost.
+
+A bounded relaxation can be applied so that every node within the bounded
+range will be considered for each step instead of only consider the optimal
+weight.
 
 ## Mathematics
 
@@ -721,12 +847,14 @@ A possible faster method involves half-GCD/matrices.
 For any interger a, b and m, __ax_by=c__ have integer solution for x and y
 if and only if m is the multiple of the `gcd(a, b)`.
 
-Alternatively, a __gcd__ is the smallest positive integer such that can be written in form __ax+by__.
+Alternatively, a __gcd__ is the smallest positive integer such that can be written
+in form __ax+by__.
 
 ### Fast multiplication
 
 #### Karatsuba multiplication
-Split the two numbers in half in digits (could be in bits) such that they become x1, x2, y1 and y2.
+Split the two numbers in half in digits (could be in bits) such that they
+become x1, x2, y1 and y2.
 Then calculate x1y1, x2y2 and (x1+x2)(y1+y2).
 This algorithm reduce the runtime for multiplication to
 O(N<sup>log2(3)</sup>) = O(N<sup>1.58</sup>).
@@ -746,12 +874,14 @@ Gaussian elimination is used for solving systems of
 linear equations. It can be finished in O(n<sup>3</sup>).
 
 ### Division
-Long division in elementary school is good enough. Maybe look at Newton-Raphson division.
+Long division in elementary school is good enough.
+Maybe look at Newton-Raphson division.
 
 ### RSA
 Exists because of the difficulty of integer factorization.
 It works like this:
-1. Alice send Bob public key (n, e) and keep d as private key and never distributed.
+1. Alice send Bob public key (n, e) and keep d as private key and
+never distributed.
 2. Bob convert message M to integer m, and calculate
 `c = m^2 mod n` and send __c__ to Alice.
 3. Alice decrypt __c__ with
@@ -770,9 +900,11 @@ def eratosthenes(n):
                 is_prime[j] = False
     return {x for x in range(2, n + 1) if is_prime[x]}
 ```
-Something else in polynomial time is found called AKS primality test, roughly finished in O(log<sup>6</sup>(n)).
+Something else in polynomial time is found called AKS primality test,
+roughly finished in O(log<sup>6</sup>(n)).
 
 ### PageRank
-An algorithm for search engine to rank results. It treats every webpage as a node with a weight.
-Weights depend on the difference between link point to the
+An algorithm for search engine to rank results. It treats every
+webpage as a node with a weight.
+Weights basically depend on the difference between link point to the
 page and point away from the page.
