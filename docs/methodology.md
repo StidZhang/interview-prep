@@ -50,7 +50,3 @@ variables for the specific object that are called on.
 ### Model-view-controller
 
 ### Model-view-viewmodel
-
-### REST
-
-### RPC
