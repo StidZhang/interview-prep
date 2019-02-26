@@ -662,6 +662,37 @@ def max_subarray_with_size(nums, k):
     return max_sum
 ```
 
+### Binary Search
+An algorithm to find an element in sorted array.
+```python
+def binary_search(nums, target):
+    # Return the same as bisect_left
+    low = 0
+    high = len(nums)-1
+
+    while low <= high:
+        mid = (low + high) // 2
+        if nums[mid] == target:
+            return mid
+        if nums[mid] > target:
+            low = mid + 1
+        else:
+            high = mid
+    return low
+```
+
+### Shuffle
+Fisher-Yates Shuffle(implemented by Knuth) is an algorithm for shuffling
+an array randomly .
+```python
+from random import randint
+def fisher_yates_shuffle(input):
+    n = len(input)
+    for i in range(n-1):
+        r = randint(i, n)
+        a[i], a[r] = a[r], a[i]
+```
+
 ## Greedy
 Greedy algorithm finds local optimal choice at each stage with the intent of
 finding a global optimum. It might not produce the best result, but it normally
@@ -908,3 +939,16 @@ An algorithm for search engine to rank results. It treats every
 webpage as a node with a weight.
 Weights basically depend on the difference between link point to the
 page and point away from the page.
+
+### Newton's Method
+A root-finding algorithm with the following formula:
+
+__x(i+1) = x(i) - f(x(i))/f`(x(i))__
+
+Sometimes the method would fail due to recursive interation point, invalid or
+discontinous derivative and non-quadratic convergence.
+
+In reality, it's common to use Brent's method which is a combination of
+bisection method, secant method(variant of Newton's method but no need to
+calculate f`(x)) and inverse quadratic interpolation as an actual root-finding
+algorithm
