@@ -203,6 +203,9 @@ def bubblesort(nums):
                 if compare(nums[j + 1]), nums[j]):
                     sorted = False
                     swap(nums, j, j+1)
+        if sorted:
+           return
+      
 
 ```
 Time complexity is O(N<sup>2</sup>).
