@@ -312,7 +312,7 @@ picking pivot that is max/min of the remaining array.
 
 Furthermore, there're some modification for quicksort for special cases to
 improve performance.
-1. Use selection sort when imput size is small.
+1. Use selection sort when input size is small.
 2. Randomly pick three numbers, and pick the medium as the pivot to avoid
 extreme cases.
 3. When array has a lot of duplicate values, split the array into 3 being
