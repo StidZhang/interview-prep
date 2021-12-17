@@ -723,7 +723,7 @@ maximum number of value while total weight is smaller or equal to a limit.
 
 ```python
 def knapsack(weights: 'List[int]', value: 'List[int]', limit: 'int'): -> 'int'
-    m = [0] * (limit+1) * len(weights)
+    m = [[0] * (limit+1) for i in len(weights)]
     for i in range(1, len(weights)+1):
         for j in range(limit+1)):
             if weights[i] > j:
